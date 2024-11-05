@@ -1,72 +1,107 @@
-﻿public interface IShape
+﻿public interface IComparable<T>
 {
-    double Area { get; }
-    double Perimeter { get; }
+    int CompareTo(T other);
 }
 
-public class Circle : IShape
+public class Student : IComparable<Student>
 {
-    private double radius;
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public double Grade { get; set; }
 
-    public Circle(double radius)
+    public Student(string name, int age, double grade)
     {
-        this.radius = radius;
+        Name = name;
+        Age = age;
+        Grade = grade;
     }
 
-    public double Area => Math.PI * radius * radius;
-    public double Perimeter => 2 * Math.PI * radius;
+    public int CompareTo(Student other)
+    {
+        if (other == null) return 1;
+
+        // Сначала сравниваем по имени
+        int nameComparison = string.Compare(Name, other.Name, StringComparison.Ordinal);
+        if (nameComparison != 0) return nameComparison;
+
+        // Затем сравниваем по возрасту
+        if (Age != other.Age) return Age.CompareTo(other.Age);
+
+        // Наконец, сравниваем по оценке
+        return Grade.CompareTo(other.Grade);
+    }
 }
 
-public class Rectangle : IShape
+// Класс Book, реализующий интерфейс IComparable<Book>
+public class Book : IComparable<Book>
 {
-    private double width;
-    private double height;
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public double Price { get; set; }
 
-    public Rectangle(double width, double height)
+    public Book(string title, string author, double price)
     {
-        this.width = width;
-        this.height = height;
+        Title = title;
+        Author = author;
+        Price = price;
     }
+    
+    public int CompareTo(Book other)
+    {
+        if (other == null) return 1;
 
-    public double Area => width * height;
-    public double Perimeter => 2 * (width + height);
+        // Сначала сравниваем по автору
+        int authorComparison = string.Compare(Author, other.Author, StringComparison.Ordinal);
+        if (authorComparison != 0) return authorComparison;
+
+        // Затем сравниваем по названию
+        int titleComparison = string.Compare(Title, other.Title, StringComparison.Ordinal);
+        if (titleComparison != 0) return titleComparison;
+
+        // Наконец, сравниваем по цене
+        return Price.CompareTo(other.Price);
+    }
 }
 
-public class Triangle : IShape
-{
-    private double sideA;
-    private double sideB;
-    private double sideC;
-
-    public Triangle(double sideA, double sideB, double sideC)
-    {
-        this.sideA = sideA;
-        this.sideB = sideB;
-        this.sideC = sideC;
-    }
-
-    public double Area
-    {
-        get
-        {
-            double s = (sideA + sideB + sideC) / 2;
-            return Math.Sqrt(s * (s - sideA) * (s - sideB) * (s - sideC));
-        }
-    }
-
-    public double Perimeter => sideA + sideB + sideC;
-}
-
+// Пример использования
 public class Program
 {
     public static void Main()
     {
-        IShape circle = new Circle(5);
-        IShape rectangle = new Rectangle(4, 6);
-        IShape triangle = new Triangle(3, 4, 5);
+        // Создаем список студентов
+        List<Student> students = new List<Student>
+        {
+            new Student("Alice", 20, 85.5),
+            new Student("Bob", 22, 90.0),
+            new Student("Alice", 20, 80.0)
+        };
 
-        Console.WriteLine($"Круг - Площадь: {circle.Area}, Периметр: {circle.Perimeter}");
-        Console.WriteLine($"Прямоуголбник - Площадь: {rectangle.Area}, Периметр: {rectangle.Perimeter}");
-        Console.WriteLine($"Треугольник - Площадь: {triangle.Area}, Периметр: {triangle.Perimeter}");
+        // Сортируем список студентов
+        students.Sort();
+
+        // Выводим отсортированный список студентов
+        Console.WriteLine("Sorted Students:");
+        foreach (var student in students)
+        {
+            Console.WriteLine($"Name: {student.Name}, Age: {student.Age}, Grade: {student.Grade}");
+        }
+
+        // Создаем список книг
+        List<Book> books = new List<Book>
+        {
+            new Book("Book1", "AuthorA", 25.0),
+            new Book("Book2", "AuthorB", 20.0),
+            new Book("Book1", "AuthorA", 30.0)
+        };
+
+        // Сортируем список книг
+        books.Sort();
+
+        // Выводим отсортированный список книг
+        Console.WriteLine("\nSorted Books:");
+        foreach (var book in books)
+        {
+            Console.WriteLine($"Title: {book.Title}, Author: {book.Author}, Price: {book.Price}");
+        }
     }
 }
